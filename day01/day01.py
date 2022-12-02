@@ -1,6 +1,4 @@
-#!/usr/bin/pypy3
-
-import os, sys
+#!/usr/bin/env python
 
 stuff = open('input.txt', 'r').read().split('\n\n')
 
