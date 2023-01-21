@@ -89,3 +89,83 @@ stuff.each do |step|
 end
 
 puts "part 1: #{t_visits.size}"
+
+def getNewPos(lead, follow)
+  diff_x = (lead[:x] - follow[:x])
+  diff_y = (lead[:y] - follow[:y])
+
+  if diff_x.abs > 1 || diff_y.abs > 1
+    if diff_x > 0
+      follow[:x] += 1
+    elsif diff_x < 0
+      follow[:x] -= 1
+    end
+    if diff_y > 0
+      follow[:y] += 1
+    elsif diff_y < 0
+      follow[:y] -= 1
+    end
+  end
+end
+
+def printMap(knots, width, hight)
+  (0..hight).reverse_each do |h|
+    line = [] of String
+    (0..width).each do |w|
+      if knots.first == {:x => w, :y => h}
+        line.push("H")
+      elsif knots.any?{|k| k == {:x => w, :y => h}}
+        line.push("T")
+      else
+        line.push(".")
+      end
+    end
+    puts line.join("")
+  end
+end
+
+knot_pos = [] of Hash(Symbol, Int32)
+knot_cnt = 10
+knot_visits = [] of Hash(Symbol, Int32)
+
+(0..knot_cnt-1).each do |knot|
+  knot_pos.push({:x => 0, :y => 0})
+end
+
+# printMap(knot_pos, width, hight)
+
+stuff.each do |step|
+  # puts "step: #{step}"
+  dir = step[0]
+  cnt = step[1].to_i
+
+  # puts step
+
+  (0..cnt-1).each do
+    if dir == "L"
+      knot_pos.first[:x] -= 1
+    elsif dir == "R"
+      knot_pos.first[:x] += 1
+    elsif dir == "U"
+      knot_pos.first[:y] += 1
+    elsif dir == "D"
+      knot_pos.first[:y] -= 1
+    else
+      puts "Not a dir: #{dir}"
+    end
+
+    (1..knot_cnt-1).each do |knot|
+      getNewPos(knot_pos[knot-1], knot_pos[knot])
+    end
+
+    # printMap(knot_pos, width, hight)
+    # puts ""
+
+    knot_visits.push(knot_pos.last.dup) if !knot_visits.includes? knot_pos.last
+  end
+
+end
+
+# printMap(knot_pos, width, hight)
+
+puts "part 2: #{knot_visits.size}"
